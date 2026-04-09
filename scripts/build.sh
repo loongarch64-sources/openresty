@@ -31,6 +31,14 @@ prepare()
     # 例如：git clone -b ${VERSION} --depth=1 https://github.com/openresty/openresty ${SRCS}/${VERSION}
     # 例如：patch -p1 < patches/loongarch-fix.patch
     
+    if [ ! -d "${SRCS}/${VERSION}" ]; then
+    	git clone -b ${VERSION} --depth=1 https://github.com/openresty/openresty ${SRCS}/${VERSION}
+        pushd ${SRCS}/${VERSION}
+        ${SCRIPT_DIR}/patch.sh
+        popd
+    fi
+
+    
     echo "✅ [Prepare] Environment ready."
 }
 
@@ -43,7 +51,9 @@ build()
     # 例如：make -j$(nproc) ARCH=loongarch64
     # 例如：cmake -DCMAKE_BUILD_TYPE=Release .. && make
     
-
+    pushd ${SRCS}/${VERSION}
+    ./util/mirror-tarballs
+    popd
     echo "✅ [Build] Compilation finished."
 }
 
@@ -53,9 +63,10 @@ post_build()
     echo "📦 [Post-Build] Organizing artifacts..."
     
     # TODO: 在此处添加整理命令
-    # 例如：mkdir -p dists && cp binary dist/
+    # 例如：mkdir -p dists && cp binary dist/${VERSION}
     # 例如：strip dist/binary
     
+    mv ${SRCS}/${VERSION}/openresty-${VERSION#v}.tar.gz ${DISTS}/${VERSION}/
     echo "✅ [Post-Build] Artifacts ready in ./dists/${VERSION}."
 }
 
