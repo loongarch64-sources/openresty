@@ -11,7 +11,7 @@ env:
 
 jobs:
   build-and-release:
-    if: github.repository_owner == 'loongarch64-releases'
+    if: github.repository_owner == 'loongarch64-sources'
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
